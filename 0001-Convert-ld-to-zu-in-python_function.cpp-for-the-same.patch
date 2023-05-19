@@ -1,0 +1,24 @@
+From 49b8c5dbb665b8dd98f21de332b446140d6190b9 Mon Sep 17 00:00:00 2001
+From: root <root@localhost>
+Date: Mon, 15 May 2023 02:58:43 +0000
+Subject: [PATCH] fix stuff idk
+
+---
+ torch/csrc/autograd/python_function.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/torch/csrc/autograd/python_function.cpp b/torch/csrc/autograd/python_function.cpp
+index ba6331ed5ff..968f5a67dfa 100644
+--- a/torch/csrc/autograd/python_function.cpp
++++ b/torch/csrc/autograd/python_function.cpp
+@@ -508,7 +508,7 @@ static void _save_variables(
+       self->saved_variables.emplace_back(tensor, is_output);
+     } else {
+       throw torch::TypeError(
+-          "save_for_backward can only save variables, but argument %ld is of "
++          "save_for_backward can only save variables, but argument %zu is of "
+           "type %s",
+           i,
+           Py_TYPE(obj)->tp_name);
+-- 
+2.20.1

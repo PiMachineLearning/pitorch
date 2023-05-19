@@ -1,0 +1,35 @@
+From 22a88b4fa1bab319619247908a6ba6145d511e27 Mon Sep 17 00:00:00 2001
+From: pandaninjas <admin@malwarefight.wip.la>
+Date: Sun, 14 May 2023 14:31:58 -0400
+Subject: [PATCH] Use %zu instead of %ld because %ld in python_arg_parser.h
+
+%ld does not compile when size_t is not a long int (i.e. when on a 32 bit system such as the Raspberry Pi)
+---
+ torch/csrc/utils/python_arg_parser.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/torch/csrc/utils/python_arg_parser.h b/torch/csrc/utils/python_arg_parser.h
+index ff4f06e4ec..ee41d79d4e 100644
+--- a/torch/csrc/utils/python_arg_parser.h
++++ b/torch/csrc/utils/python_arg_parser.h
+@@ -509,7 +509,7 @@ inline void throw_intlist_exception(
+     PyObject* obj,
+     size_t idx) {
+   throw TypeError(
+-      "%s(): argument '%s' must be %s, but found element of type %s at pos %ld",
++      "%s(): argument '%s' must be %s, but found element of type %s at pos %zu",
+       args->signature.name.c_str(),
+       args->signature.params[i].name.c_str(),
+       args->signature.params[i].type_name().c_str(),
+@@ -683,7 +683,7 @@ inline std::vector<double> PythonArgs::getDoublelist(int i) {
+       res[idx] = THPUtils_unpackDouble(obj);
+     } catch (const std::exception& e) {
+       throw TypeError(
+-          "%s(): argument '%s' must be %s, but found element of type %s at pos %ld",
++          "%s(): argument '%s' must be %s, but found element of type %s at pos %zu",
+           signature.name.c_str(),
+           signature.params[i].name.c_str(),
+           signature.params[i].type_name().c_str(),
+-- 
+2.34.1
+
