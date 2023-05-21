@@ -39,6 +39,7 @@ jobs:
             
       - uses: actions/cache/save@v3
         id: cache-save
+        if: always()
         with:
           path: /var/lib/docker/volumes/ccache/_data
           key: ${{ runner.os }}
