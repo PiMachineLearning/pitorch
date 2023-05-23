@@ -13,6 +13,9 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: chown and chmod to allow editing the cache dir
+        run: |
+          sudo chmod -R 777 /var/lib/docker/volumes/ccache/_data
       - uses: actions/checkout@v3
       - uses: actions/cache/restore@v3
         id: cache-restore
