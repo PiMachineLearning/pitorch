@@ -2,8 +2,8 @@
 docker pull pimachinelearning/pitorch-builder
 if [ $? -eq 1 ]; then
   docker build -t pimachinelearning/pitorch-builder .
-  docker tag pimachinelearning/pitorch-builder:latest pimachinelearning/raspi-python:latest
-  docker push pimachinelearning/raspi-python:latest
+  docker tag pimachinelearning/pitorch-builder:latest pimachinelearning/pitorch-builder:latest
+  docker push pimachinelearning/pitorch-builder:latest
 fi
 docker volume create ccache
 # kill -9 to make sure it's killed    5 hours, allow 1 hour for the other the tasks
