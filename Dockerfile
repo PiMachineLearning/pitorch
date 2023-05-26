@@ -1,9 +1,7 @@
 FROM pimachinelearning/raspi-python:3.9.16
 
-RUN apt-get update && apt-get install -y git libatlas3-base libgfortran5 ccache
-RUN git clone https://github.com/pytorch/pytorch.git
-RUN cd pytorch && git checkout v2.0.1 && git submodule sync
-RUN cd pytorch && git submodule update --init --recursive
+RUN apt-get update && apt-get install -y git libatlas3-base libgfortran5 ccache wget
+RUN wget https://github.com/pytorch/pytorch/releases/download/v2.0.1/pytorch-v2.0.1.tar.gz && tar -zxf pytorch-v2.0.1.tar.gz --strip-components=1 -C pytorch
 COPY pip.conf /etc/pip.conf
 RUN python3.9 -m pip install --upgrade pip
 RUN python3.9 -m pip install cmake ninja
