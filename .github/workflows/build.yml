@@ -47,7 +47,7 @@ jobs:
               -X DELETE \
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              https://api.github.com/repos/PiMachineLearning/pitorch/actions/caches/${{ runner.os }} || exit 0
+              https://api.github.com/repos/PiMachineLearning/pitorch/actions/caches || exit 0
 
       - uses: actions/cache/save@v3
         id: cache-save
