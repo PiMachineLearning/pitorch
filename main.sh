@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 docker pull pimachinelearning/pitorch-builder
 if [ $? -eq 1 ]; then
+  REBUILD=1
+fi
+
+git diff-tree --no-commit-id --name-only -r HEAD | grep -v .github | grep -v LICENSE | grep -v README.md
+if [ $? -eq 1 ]; then
+  REBUILD=1
+fi
+
+if [ "$REBUILD" -eq 1 ]; then
   docker build -t pimachinelearning/pitorch-builder .
   docker tag pimachinelearning/pitorch-builder:latest pimachinelearning/pitorch-builder:latest
   docker push pimachinelearning/pitorch-builder:latest

@@ -1,0 +1,200 @@
+From a240b18919e0732de97fc0ad0302584aef275b89 Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Fri, 19 May 2023 22:47:43 -0400
+Subject: [PATCH 1/7] Replace int64_t with size_type when applicable
+
+---
+ torch/csrc/jit/python/python_list.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/torch/csrc/jit/python/python_list.h b/torch/csrc/jit/python/python_list.h
+index 04a2f23b29a87..e51222f43fc64 100644
+--- a/torch/csrc/jit/python/python_list.h
++++ b/torch/csrc/jit/python/python_list.h
+@@ -119,13 +119,13 @@ class ScriptList final {
+   }
+ 
+   // Get the size of the list.
+-  int64_t len() const {
++  size_type len() const {
+     return list_.size();
+   }
+ 
+   // Count the number of times a value appears in the list.
+-  int64_t count(const IValue& value) const {
+-    int64_t total = 0;
++  size_type count(const IValue& value) const {
++    size_type total = 0;
+ 
+     for (const auto& elem : list_) {
+       if (elem == value) {
+
+From 1186844de5216870fe03d02e5acaaa18e6ea47f2 Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Fri, 19 May 2023 23:46:28 -0400
+Subject: [PATCH 2/7] Replace size_type with diff_type
+
+diff_type is more analagous to int64_t, which was used previously
+---
+ torch/csrc/jit/python/python_list.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/torch/csrc/jit/python/python_list.h b/torch/csrc/jit/python/python_list.h
+index e51222f43fc64..a5d56f8a23ce8 100644
+--- a/torch/csrc/jit/python/python_list.h
++++ b/torch/csrc/jit/python/python_list.h
+@@ -119,13 +119,13 @@ class ScriptList final {
+   }
+ 
+   // Get the size of the list.
+-  size_type len() const {
++  ptrdiff_t len() const {
+     return list_.size();
+   }
+ 
+   // Count the number of times a value appears in the list.
+-  size_type count(const IValue& value) const {
+-    size_type total = 0;
++  ptrdiff_t count(const IValue& value) const {
++    ptrdiff_t total = 0;
+ 
+     for (const auto& elem : list_) {
+       if (elem == value) {
+
+From 556172c32b23c808571a0fb95f2702482f96dc2b Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Sat, 20 May 2023 00:38:10 -0400
+Subject: [PATCH 3/7] Replace ptrdiff_t with diff_type
+
+---
+ torch/csrc/jit/python/python_list.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/torch/csrc/jit/python/python_list.h b/torch/csrc/jit/python/python_list.h
+index a5d56f8a23ce8..0c4df2921a4d2 100644
+--- a/torch/csrc/jit/python/python_list.h
++++ b/torch/csrc/jit/python/python_list.h
+@@ -119,13 +119,13 @@ class ScriptList final {
+   }
+ 
+   // Get the size of the list.
+-  ptrdiff_t len() const {
++  diff_type len() const {
+     return list_.size();
+   }
+ 
+   // Count the number of times a value appears in the list.
+-  ptrdiff_t count(const IValue& value) const {
+-    ptrdiff_t total = 0;
++  diff_type count(const IValue& value) const {
++    diff_type total = 0;
+ 
+     for (const auto& elem : list_) {
+       if (elem == value) {
+
+From 4f11955c1f98402b40ea2de2d3b08f9fcd1e5cd5 Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Mon, 22 May 2023 12:00:43 -0400
+Subject: [PATCH 4/7] Replace diff_type with ssize_t
+
+---
+ torch/csrc/jit/python/python_list.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/torch/csrc/jit/python/python_list.h b/torch/csrc/jit/python/python_list.h
+index 0c4df2921a4d2..f816c3bb93219 100644
+--- a/torch/csrc/jit/python/python_list.h
++++ b/torch/csrc/jit/python/python_list.h
+@@ -119,13 +119,13 @@ class ScriptList final {
+   }
+ 
+   // Get the size of the list.
+-  diff_type len() const {
++  ssize_t len() const {
+     return list_.size();
+   }
+ 
+   // Count the number of times a value appears in the list.
+-  diff_type count(const IValue& value) const {
+-    diff_type total = 0;
++  ssize_t count(const IValue& value) const {
++    ssize_t total = 0;
+ 
+     for (const auto& elem : list_) {
+       if (elem == value) {
+
+From dd2308b74cbc6639d0968a72e8c0ad686edcfe3b Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Tue, 23 May 2023 12:16:03 -0400
+Subject: [PATCH 5/7] Create an IValue constructor accepting ssize_t in
+ ivalue.h
+
+---
+ aten/src/ATen/core/ivalue.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/aten/src/ATen/core/ivalue.h b/aten/src/ATen/core/ivalue.h
+index ab56b34288b91..a057b865f642f 100644
+--- a/aten/src/ATen/core/ivalue.h
++++ b/aten/src/ATen/core/ivalue.h
+@@ -582,6 +582,10 @@ struct TORCH_API IValue final {
+   IValue(int64_t i) : tag(Tag::Int) {
+     payload.u.as_int = i;
+   }
++    
++  IValue(ssize_t i) : tag(Tag::Int) {
++    payload.u.as_int = i;
++  }
+ 
+   IValue(c10::SymInt i) {
+     if (auto mi = i.maybe_as_int()) {
+
+From f53023216e7d3dea8587f6783349d93f1dcf71d9 Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Wed, 24 May 2023 14:41:50 -0400
+Subject: [PATCH 6/7] Revert "Create an IValue constructor accepting ssize_t in
+ ivalue.h"
+
+This reverts commit dd2308b74cbc6639d0968a72e8c0ad686edcfe3b.
+---
+ aten/src/ATen/core/ivalue.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/aten/src/ATen/core/ivalue.h b/aten/src/ATen/core/ivalue.h
+index a057b865f642f..ab56b34288b91 100644
+--- a/aten/src/ATen/core/ivalue.h
++++ b/aten/src/ATen/core/ivalue.h
+@@ -582,10 +582,6 @@ struct TORCH_API IValue final {
+   IValue(int64_t i) : tag(Tag::Int) {
+     payload.u.as_int = i;
+   }
+-    
+-  IValue(ssize_t i) : tag(Tag::Int) {
+-    payload.u.as_int = i;
+-  }
+ 
+   IValue(c10::SymInt i) {
+     if (auto mi = i.maybe_as_int()) {
+
+From 0af67b2bb35dede6ca19a9013678f10f7e14291f Mon Sep 17 00:00:00 2001
+From: PandaNinjas <admin@malwarefight.wip.la>
+Date: Wed, 24 May 2023 14:43:44 -0400
+Subject: [PATCH 7/7] Cast ssize_t to int64_t for IValue constructor
+
+---
+ torch/csrc/jit/python/python_list.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/torch/csrc/jit/python/python_list.cpp b/torch/csrc/jit/python/python_list.cpp
+index ee2e7a7612ed7..bdee3dbc7244b 100644
+--- a/torch/csrc/jit/python/python_list.cpp
++++ b/torch/csrc/jit/python/python_list.cpp
+@@ -96,7 +96,7 @@ void initScriptListBindings(PyObject* module) {
+       .def(
+           "__len__",
+           [](const std::shared_ptr<ScriptList>& self) {
+-            return toPyObject(self->len());
++            return toPyObject(static_cast<int64_t>(self->len()));
+           })
+       .def(
+           "__contains__",
