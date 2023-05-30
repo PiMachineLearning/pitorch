@@ -20,7 +20,8 @@ timeout --signal=9 18000 docker run -e IGNORE_CORES=0 -e CCACHE_DIR=/ccache -e P
 if [ $? -eq 0 ]; then
   DOCKER_ID=$(docker ps -aq -n 1)
   docker start $DOCKER_ID
-  WHEEL=$(docker exec $DOCKER_ID find -name *.whl)
+  WHEEL=$(docker exec $DOCKER_ID find -name '*torch*.whl')
+  echo $WHEEL
   docker stop $DOCKER_ID --signal 9
 fi
 git clone https://__token__:$GITHUB_TOKEN@github.com/piMachineLearning/pimachinelearning.github.io/
