@@ -19,7 +19,20 @@ docker volume create ccache
 timeout --signal=9 18000 docker run -e IGNORE_CORES=0 -e CCACHE_DIR=/ccache --mount source=ccache,target=/ccache pimachinelearning/pitorch-builder
 if [ $? -eq 0 ]; then
   DOCKER_ID=$(docker ps -aq -n 1)
-  docker start $DOCKER_ID && docker exec $DOCKER_ID find -name *.whl
+  docker start $DOCKER_ID
+  WHEEL=$(docker exec $DOCKER_ID find -name *.whl)
+  docker stop $DOCKER_ID --signal 9
 fi
-  
+git clone https://__token__:$GITHUB_TOKEN@github.com/piMachineLearning/pimachinelearning.github.io/
+cd pimachinelearning.github.io/ || exit 1
+git config commit.gpgsign false
+git config user.name 'Automated Committer'
+git config user.email 'bot@malwarefight.wip.la'
+cd wheels || exit 1
+[[ -d torch ]] || mkdir torch
+cd torch || exit 1
+docker cp $(docker ps -aq -n 1):$WHEEL .
+git add .
+git commit -m "Automated commit: build torch"
+git push -u origin main
 sudo chmod -R 777 /var/lib/docker/

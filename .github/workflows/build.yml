@@ -40,6 +40,8 @@ jobs:
             sudo apt-get install -y qemu-user-static binfmt-support
             chmod +x main.sh
             ./main.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_PAT }}
       
       
       - name: Evict caches
