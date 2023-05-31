@@ -51,7 +51,7 @@ jobs:
             cd $GITHUB_WORKSPACE
             sudo apt-get install -y qemu-user-static binfmt-support
             chmod +x main.sh
-            ./main.sh
+            ./main.sh ${{ matrix.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUSH_PAT }}
       

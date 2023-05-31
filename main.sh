@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-docker pull pimachinelearning/pitorch-builder
+docker pull pimachinelearning/pitorch-builder:$1
 if [ $? -eq 1 ]; then
   REBUILD=1
 fi
@@ -10,13 +10,13 @@ if [ $? -eq 1 ]; then
 fi
 
 if [ "$REBUILD" -eq 1 ]; then
-  docker build -t pimachinelearning/pitorch-builder .
-  docker tag pimachinelearning/pitorch-builder:latest pimachinelearning/pitorch-builder:latest
-  docker push pimachinelearning/pitorch-builder:latest
+  docker build -t pimachinelearning/pitorch-builder:$1 .
+  docker tag pimachinelearning/pitorch-builder:$1 pimachinelearning/pitorch-builder:$1
+  docker push pimachinelearning/pitorch-builder:$1
 fi
 docker volume create ccache
 # kill -9 to make sure it's killed    5 hours, allow 1 hour for the other the tasks
-timeout --signal=9 18000 docker run -e IGNORE_CORES=0 -e CCACHE_DIR=/ccache -e PYTORCH_BUILD_VERSION=2.0.1 -e PYTORCH_BUILD_NUMBER=0 --mount source=ccache,target=/ccache pimachinelearning/pitorch-builder
+timeout --signal=9 18000 docker run --build-arg PYTORCH_VER=$1 -e IGNORE_CORES=0 -e CCACHE_DIR=/ccache --mount source=ccache,target=/ccache pimachinelearning/pitorch-builder
 if [ $? -eq 0 ]; then
   DOCKER_ID=$(docker ps -aq -n 1)
   docker start $DOCKER_ID
@@ -24,8 +24,8 @@ if [ $? -eq 0 ]; then
   echo $WHEEL
   docker stop $DOCKER_ID --signal 9
 fi
-git clone https://__token__:$GITHUB_TOKEN@github.com/piMachineLearning/pimachinelearning.github.io/
-cd pimachinelearning.github.io/ || exit 1
+git clone https://__token__:$GITHUB_TOKEN@github.com/PiMachineLearning/PiMachineLearning.github.io/
+cd PiMachineLearning.github.io/ || exit 1
 git config commit.gpgsign false
 git config user.name 'Automated Committer'
 git config user.email 'bot@malwarefight.wip.la'
