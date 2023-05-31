@@ -10,9 +10,21 @@ on:
 
 
 jobs:
-  run:
-    permissions: write-all
+  build-matrix:
     runs-on: ubuntu-latest
+    steps:
+      - id: set-matrix
+        run: echo "version_matrix=$(curl https://api.github.com/repos/pytorch/pytorch/releases | jq -r '.[]["tag_name"]' | sed s/v// | jq -Rcn '[inputs]')" >> $GITHUB_OUTPUT
+    outputs:
+      version_matrix: ${{ steps.set-matrix.outputs.version_matrix }}
+  run:
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.build-matrix.outputs.version_matrix) }}
+      fail-fast: false
+    permissions: write-all
     steps:
       - name: chown and chmod to allow editing the cache dir
         run: |
@@ -22,7 +34,7 @@ jobs:
         id: cache-restore
         with:
           path: /var/lib/docker/volumes/ccache/_data
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-${{ matrix.version }}
           
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
@@ -39,7 +51,7 @@ jobs:
             cd $GITHUB_WORKSPACE
             sudo apt-get install -y qemu-user-static binfmt-support
             chmod +x main.sh
-            ./main.sh
+            ./main.sh ${{ matrix.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUSH_PAT }}
       
@@ -50,7 +62,7 @@ jobs:
               -X DELETE \
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              https://api.github.com/repos/PiMachineLearning/pitorch/actions/caches?key=${{ runner.os }} || exit 0
+              https://api.github.com/repos/PiMachineLearning/pitorch/actions/caches?key=${{ runner.os }}-${{ matrix.version }} || exit 0
 
       - uses: actions/cache/save@v3
         id: cache-save
