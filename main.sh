@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+
 docker pull pimachinelearning/pitorch-builder:"$1"
 if [ $? -eq 1 ]; then
   REBUILD=1
@@ -15,20 +15,18 @@ if git log -1 --pretty=%B | grep '[force build containers]'; then
 fi
 
 if [ "$REBUILD" -eq 1 ]; then
-  docker build --build-arg PYTORCH_VER="$1" -t pimachinelearning/pitorch-builder:"$1" .
+  docker build --build-arg PYTORCH_VER="$1" -t pimachinelearning/pitorch-builder:"$1" . || exit 1
   docker tag pimachinelearning/pitorch-builder:"$1" pimachinelearning/pitorch-builder:"$1"
   docker push pimachinelearning/pitorch-builder:"$1"
 fi
 docker volume create ccache
 # kill -9 to make sure it's killed    5 hours, allow 1 hour for the other the tasks
-timeout --signal=9 18000 docker run -e IGNORE_CORES=0 -e CCACHE_DIR=/ccache --mount source=ccache,target=/ccache pimachinelearning/pitorch-builder
-if [ $? -eq 0 ]; then
-  DOCKER_ID=$(docker ps -aq -n 1)
-  docker start "$DOCKER_ID"
-  WHEEL=$(docker exec "$DOCKER_ID" find -name '*torch*.whl')
-  echo "$WHEEL"
-  docker stop "$DOCKER_ID" --signal 9
-fi
+timeout --signal=9 18000 docker run -e IGNORE_CORES=0 -e CCACHE_DIR=/ccache --mount source=ccache,target=/ccache pimachinelearning/pitorch-builder || exit 1
+DOCKER_ID=$(docker ps -aq -n 1)
+docker start "$DOCKER_ID"
+WHEEL=$(docker exec "$DOCKER_ID" find -name '*torch*.whl')
+echo "$WHEEL"
+docker stop "$DOCKER_ID" --signal 9
 git clone https://__token__:"$GITHUB_TOKEN"@github.com/PiMachineLearning/PiMachineLearning.github.io/
 cd PiMachineLearning.github.io/ || exit 1
 git config commit.gpgsign false
