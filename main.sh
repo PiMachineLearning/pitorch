@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 docker pull pimachinelearning/pitorch-builder:"$1"
 if [ $? -eq 1 ]; then
   REBUILD=1
