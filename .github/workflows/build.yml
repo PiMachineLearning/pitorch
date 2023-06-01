@@ -69,4 +69,4 @@ jobs:
         if: always()
         with:
           path: /var/lib/docker/volumes/ccache/_data
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-${{ matrix.version }}
