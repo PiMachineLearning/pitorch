@@ -8,6 +8,9 @@ on:
   push:
     branches: [ "main" ]
 
+concurrency:
+  group: "pytorch"
+  cancel-in-progress: false
 
 jobs:
   build-matrix:
