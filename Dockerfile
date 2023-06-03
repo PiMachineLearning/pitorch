@@ -11,4 +11,4 @@ RUN cd pytorch && python3.9 -m pip install numpy==1.24.2 && python3.9 -m pip ins
 COPY *.patch /pytorch/
 COPY patch.sh /pytorch/
 RUN cd pytorch && chmod +x patch.sh && ./patch.sh
-CMD cd pytorch && MAX_JOBS=$(nproc --ignore=${IGNORE_CORES:-8}) PYTORCH_BUILD_VERSION={PYTORCH_VER} PYTORCH_BUILD_NUMBER=0 USE_XNNPACK=OFF USE_CUDA=0 USE_CUDNN=0 USE_MKLDNN=0 USE_METAL=0 USE_NCCL=OFF USE_NNPACK=1 USE_QNNPACK=0 USE_PYTORCH_QNNPACK=0 USE_DISTRIBUTED=0 BUILD_TEST=0 CFLAGS="-march=armv8-a+crc+simd -mfpu=vfpv3-d16" python3.9 setup.py bdist_wheel
+CMD cd pytorch && MAX_JOBS=$(nproc --ignore=${IGNORE_CORES:-8}) PYTORCH_BUILD_VERSION=${PYTORCH_VER} PYTORCH_BUILD_NUMBER=0 USE_XNNPACK=OFF USE_CUDA=0 USE_CUDNN=0 USE_MKLDNN=0 USE_METAL=0 USE_NCCL=OFF USE_NNPACK=1 USE_QNNPACK=0 USE_PYTORCH_QNNPACK=0 USE_DISTRIBUTED=0 BUILD_TEST=0 CFLAGS="-march=armv8-a+crc+simd -mfpu=vfpv3-d16" python3.9 setup.py bdist_wheel
