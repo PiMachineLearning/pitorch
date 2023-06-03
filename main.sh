@@ -27,8 +27,8 @@ docker start "$DOCKER_ID"
 WHEEL=$(docker exec "$DOCKER_ID" find -name '*torch*.whl')
 echo "$WHEEL"
 docker stop -t 0 "$DOCKER_ID" 
-git clone https://__token__:"$GITHUB_TOKEN"@github.com/PiMachineLearning/PiMachineLearning.github.io/
-cd PiMachineLearning.github.io/ || exit 1
+git clone https://__token__:"$GITHUB_TOKEN"@github.com/PiMachineLearning/staging/
+cd staging/ || exit 1
 git config commit.gpgsign false
 git config user.name 'Automated Committer'
 git config user.email 'bot@malwarefight.wip.la'
