@@ -9,7 +9,7 @@ if git diff-tree --no-commit-id --name-only -r HEAD | grep -v .github | grep -v 
   REBUILD=1
 fi
 
-if git log -1 --pretty=%B | grep '[force build containers]'; then
+if git log -1 --pretty=%B | grep '\[force build containers\]'; then
   REBUILD=1
 fi
 
