@@ -5,8 +5,7 @@ if [ $? -eq 1 ]; then
   REBUILD=1
 fi
 
-git diff-tree --no-commit-id --name-only -r HEAD | grep -v .github | grep -v LICENSE | grep -v README.md | grep -v main.sh
-if [ $? -eq 1 ]; then
+if git diff-tree --no-commit-id --name-only -r HEAD | grep -v .github | grep -v LICENSE | grep -v README.md | grep -v main.sh; then
   REBUILD=1
 fi
 
