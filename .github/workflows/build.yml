@@ -48,15 +48,21 @@ jobs:
       - name: Login to GHCR
         run: |
           echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u PiMachineLearning --password-stdin
-          
+      
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
       - name: Build Pytorch
         run: |
             cd $GITHUB_WORKSPACE
             sudo apt-get install -y qemu-user-static binfmt-support
             chmod +x main.sh
             ./main.sh ${{ matrix.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUSH_PAT }}
+        env:          
+          VPS_HOST: ${{ secrets.VPS_HOST }}
       
       
       - name: Evict caches

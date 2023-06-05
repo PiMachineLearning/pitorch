@@ -29,16 +29,19 @@ docker start "$DOCKER_ID"
 WHEEL=$(docker exec "$DOCKER_ID" find -name '*torch*.whl')
 echo "$WHEEL"
 docker stop -t 0 "$DOCKER_ID" 
-git clone https://__token__:"$GITHUB_TOKEN"@github.com/PiMachineLearning/staging/
-cd staging/ || exit 1
-git config commit.gpgsign false
-git config user.name 'Automated Committer'
-git config user.email 'bot@malwarefight.wip.la'
-cd wheels || exit 1
-[[ -d torch ]] || mkdir torch
-cd torch || exit 1
 docker cp "$(docker ps -aq -n 1)":"$WHEEL" .
-git add .
-git commit -m "Automated commit: build torch"
-git push -u origin main
-sudo chmod -R 777 /var/lib/docker/
+LOCAL_FILE=$(ls | grep whl)
+touch empty
+while true
+do
+    # ensure that Sharin is not currently rebuilding the static repo
+    echo -e "get uploader/Sharin/lock /dev/null" | sftp -b -  uploader@$VPS_HOST 
+    if [ $? -ne 0 ]; then
+        echo "safe to work" # not entirely due to data races, but risk is reduced
+        break
+    fi
+    sleep 60
+done
+echo -e "put empty uploader/Sharin/lock" | sftp -b - uploader@$VPS_HOST 
+echo -e "cd uploader/wheels/torch\nput $LOCAL_FILE" | sftp -b - uploader@$VPS_HOST
+echo -e "rm uploader/Sharin/lock" | sftp uploader@$VPS_HOST
