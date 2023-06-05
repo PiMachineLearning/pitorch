@@ -35,13 +35,13 @@ touch empty
 while true
 do
     # ensure that Sharin is not currently rebuilding the static repo
-    echo -e "get uploader/Sharin/lock /dev/null" | sftp -b -  uploader@$VPS_HOST 
+    echo -e "get uploader/lock /dev/null" | sftp -b -  uploader@$VPS_HOST 
     if [ $? -ne 0 ]; then
         echo "safe to work" # not entirely due to data races, but risk is reduced
         break
     fi
     sleep 60
 done
-echo -e "put empty uploader/Sharin/lock" | sftp -b - uploader@$VPS_HOST 
+echo -e "put empty uploader/lock" | sftp -b - uploader@$VPS_HOST 
 echo -e "cd uploader/wheels/torch\nput $LOCAL_FILE" | sftp -b - uploader@$VPS_HOST
-echo -e "rm uploader/Sharin/lock" | sftp uploader@$VPS_HOST
+echo -e "rm uploader/lock" | sftp uploader@$VPS_HOST
