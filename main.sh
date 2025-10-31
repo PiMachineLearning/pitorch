@@ -3,7 +3,7 @@
 docker pull pimachinelearning/pitorch-builder:"$1"
 
 REBUILD=0
-if [ $? -eq 1 ]; then
+if [ $? -ne 0 ]; then
   REBUILD=1
 fi
 
