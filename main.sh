@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
-docker pull pimachinelearning/pitorch-builder:"$1"
+REBUILD=1
 
-REBUILD=0
-if [ $? -ne 0 ]; then
-  REBUILD=1
-fi
+docker pull pimachinelearning/pitorch-builder:"$1" && REBUILD=0
+
 
 if git diff-tree --no-commit-id --name-only -r HEAD | grep -v .github | grep -v LICENSE | grep -v README.md | grep -v main.sh; then
   REBUILD=1
